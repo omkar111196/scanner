@@ -18,10 +18,6 @@
             margin: 20px 0;
         }
     </style>
-    
-    <!-- Firebase JS SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
 </head>
 <body>
     <h1>Coupon Verification</h1>
@@ -46,17 +42,29 @@
         <input type="text" id="phone" placeholder="Enter phone number"><br>
         <button onclick="submitDetails()">Submit</button>
     </div>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-  apiKey: "AIzaSyCuhCVIGbIm5ijNC8GK1iCkYsRtGtgzQhc",
-  authDomain: "qr-code-edd36.firebaseapp.com",
-  projectId: "qr-code-edd36",
-  storageBucket: "qr-code-edd36.appspot.com",
-  messagingSenderId: "327979492450",
-  appId: "1:327979492450:web:e33bee7424fef9da925d3b"
-};
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmpHCjDRb59vKr5-fpBZfYLEMo4K7E9qk",
+    authDomain: "coupons-26588.firebaseapp.com",
+    projectId: "coupons-26588",
+    storageBucket: "coupons-26588.appspot.com",
+    messagingSenderId: "121426779663",
+    appId: "1:121426779663:web:54af2c99e656db3bd6cd7a",
+    measurementId: "G-DLNN29YBMY"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
