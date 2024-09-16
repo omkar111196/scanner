@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Verification</title>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <h1>Coupon Verification</h1>
+
+    <div id="coupon-status">
+        <p>Loading coupon status...</p>
+    </div>
+
+    <div id="verify-section" style="display: none;">
+        <h3>Employee Verification</h3>
+        <input type="password" id="employee-password" placeholder="Enter employee password">
+        <button onclick="verifyEmployee()">Verify</button>
+    </div>
+
+    <div id="user-details" style="display: none;">
+        <h3>Enter User Details</h3>
+        <input type="text" id="name" placeholder="Enter your name"><br>
+        <input type="text" id="gender" placeholder="Enter gender"><br>
+        <input type="text" id="phone" placeholder="Enter phone number"><br>
+        <button onclick="submitDetails()">Submit</button>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_FIREBASE_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_FIREBASE_PROJECT_ID",
+            storageBucket: "YOUR_FIREBASE_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+            appId: "YOUR_FIREBASE_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Get coupon ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const couponId = urlParams.get('id');
+
+        // Check coupon status
+        db.collection("coupons").doc(couponId).get().then((doc) => {
+            if (doc.exists) {
+                const coupon = doc.data();
+                if (coupon.status === 'used') {
+                    document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
+                } else {
+                    document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.</p>`;
+                    document.getElementById("verify-section").style.display = "block";
+                }
+            } else {
+                document.getElementById("coupon-status").innerHTML = `<p>Invalid coupon ID.</p>`;
+            }
+        });
+
+        // Employee verification
+        function verifyEmployee() {
+            const password = document.getElementById("employee-password").value;
+            if (password === 'omkar1234') {
+                document.getElementById("user-details").style.display = "block";
+            } else {
+                alert('Invalid employee password');
+            }
+        }
+
+        // Submit user details and mark coupon as used
+        function submitDetails() {
+            const name = document.getElementById("name").value;
+            const gender = document.getElementById("gender").value;
+            const phone = document.getElementById("phone").value;
+
+            // Update Firestore with user details
+            db.collection("coupons").doc(couponId).update({
+                status: 'used',
+                verified: true,
+                user_details: {
+                    name: name,
+                    gender: gender,
+                    phone: phone
+                }
+            }).then(() => {
+                alert('Coupon successfully verified and used!');
+                document.getElementById("coupon-status").innerHTML = `<p>Coupon has been used successfully.</p>`;
+                document.getElementById("verify-section").style.display = "none";
+                document.getElementById("user-details").style.display = "none";
+            }).catch((error) => {
+                console.error("Error updating document: ", error);
+            });
+        }
+    </script>
+</body>
+</html>
