@@ -4,22 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coupon Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        #coupon-status, #verify-section, #user-details {
+            margin: 20px 0;
+        }
+    </style>
+    
+    <!-- Firebase JS SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js"></script>
 </head>
 <body>
     <h1>Coupon Verification</h1>
 
+    <!-- Coupon Status Section -->
     <div id="coupon-status">
         <p>Loading coupon status...</p>
     </div>
 
+    <!-- Employee Verification Section -->
     <div id="verify-section" style="display: none;">
         <h3>Employee Verification</h3>
         <input type="password" id="employee-password" placeholder="Enter employee password">
-        <button onclick="verifyEmployee()">Verify</button>
+        <button onclick="verifyEmployee()">Verify Employee</button>
     </div>
 
+    <!-- User Details Section -->
     <div id="user-details" style="display: none;">
         <h3>Enter User Details</h3>
         <input type="text" id="name" placeholder="Enter your name"><br>
@@ -30,8 +49,7 @@
 
     <script>
         // Firebase configuration
-
-    const firebaseConfig = {
+        const firebaseConfig = {
   apiKey: "AIzaSyCuhCVIGbIm5ijNC8GK1iCkYsRtGtgzQhc",
   authDomain: "qr-code-edd36.firebaseapp.com",
   projectId: "qr-code-edd36",
@@ -39,7 +57,8 @@
   messagingSenderId: "327979492450",
   appId: "1:327979492450:web:e33bee7424fef9da925d3b"
 };
-        
+
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
@@ -60,6 +79,8 @@
             } else {
                 document.getElementById("coupon-status").innerHTML = `<p>Invalid coupon ID.</p>`;
             }
+        }).catch((error) => {
+            document.getElementById("coupon-status").innerHTML = `<p>Error retrieving coupon: ${error.message}</p>`;
         });
 
         // Employee verification
@@ -78,7 +99,12 @@
             const gender = document.getElementById("gender").value;
             const phone = document.getElementById("phone").value;
 
-            // Update Firestore with user details
+            if (!name || !gender || !phone) {
+                alert("Please fill in all user details");
+                return;
+            }
+
+            // Update Firestore with user details and mark coupon as used
             db.collection("coupons").doc(couponId).update({
                 status: 'used',
                 verified: true,
@@ -93,7 +119,7 @@
                 document.getElementById("verify-section").style.display = "none";
                 document.getElementById("user-details").style.display = "none";
             }).catch((error) => {
-                console.error("Error updating document: ", error);
+                console.error("Error updating coupon: ", error);
             });
         }
     </script>
