@@ -42,54 +42,56 @@
         <input type="text" id="phone" placeholder="Enter phone number"><br>
         <button onclick="submitDetails()">Submit</button>
     </div>
+
     <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBmpHCjDRb59vKr5-fpBZfYLEMo4K7E9qk",
-    authDomain: "coupons-26588.firebaseapp.com",
-    projectId: "coupons-26588",
-    storageBucket: "coupons-26588.appspot.com",
-    messagingSenderId: "121426779663",
-    appId: "1:121426779663:web:54af2c99e656db3bd6cd7a",
-    measurementId: "G-DLNN29YBMY"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmpHCjDRb59vKr5-fpBZfYLEMo4K7E9qk",
+            authDomain: "coupons-26588.firebaseapp.com",
+            projectId: "coupons-26588",
+            storageBucket: "coupons-26588.appspot.com",
+            messagingSenderId: "121426779663",
+            appId: "1:121426779663:web:54af2c99e656db3bd6cd7a",
+            measurementId: "G-DLNN29YBMY"
+        };
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
 
         // Get coupon ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const couponId = urlParams.get('id');
 
         // Check coupon status
-        db.collection("coupons").doc(couponId).get().then((doc) => {
-            if (doc.exists) {
-                const coupon = doc.data();
-                if (coupon.status === 'used') {
-                    document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
+        async function checkCouponStatus() {
+            try {
+                const docRef = doc(db, "coupons", couponId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const coupon = docSnap.data();
+                    if (coupon.status === 'used') {
+                        document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
+                    } else {
+                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.</p>`;
+                        document.getElementById("verify-section").style.display = "block";
+                    }
                 } else {
-                    document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.</p>`;
-                    document.getElementById("verify-section").style.display = "block";
+                    document.getElementById("coupon-status").innerHTML = `<p>Invalid coupon ID.</p>`;
                 }
-            } else {
-                document.getElementById("coupon-status").innerHTML = `<p>Invalid coupon ID.</p>`;
+            } catch (error) {
+                document.getElementById("coupon-status").innerHTML = `<p>Error retrieving coupon: ${error.message}</p>`;
             }
-        }).catch((error) => {
-            document.getElementById("coupon-status").innerHTML = `<p>Error retrieving coupon: ${error.message}</p>`;
-        });
+        }
+
+        checkCouponStatus();
 
         // Employee verification
         function verifyEmployee() {
@@ -102,7 +104,7 @@
         }
 
         // Submit user details and mark coupon as used
-        function submitDetails() {
+        async function submitDetails() {
             const name = document.getElementById("name").value;
             const gender = document.getElementById("gender").value;
             const phone = document.getElementById("phone").value;
@@ -112,23 +114,24 @@
                 return;
             }
 
-            // Update Firestore with user details and mark coupon as used
-            db.collection("coupons").doc(couponId).update({
-                status: 'used',
-                verified: true,
-                user_details: {
-                    name: name,
-                    gender: gender,
-                    phone: phone
-                }
-            }).then(() => {
+            try {
+                const docRef = doc(db, "coupons", couponId);
+                await updateDoc(docRef, {
+                    status: 'used',
+                    verified: true,
+                    user_details: {
+                        name: name,
+                        gender: gender,
+                        phone: phone
+                    }
+                });
                 alert('Coupon successfully verified and used!');
                 document.getElementById("coupon-status").innerHTML = `<p>Coupon has been used successfully.</p>`;
                 document.getElementById("verify-section").style.display = "none";
                 document.getElementById("user-details").style.display = "none";
-            }).catch((error) => {
+            } catch (error) {
                 console.error("Error updating coupon: ", error);
-            });
+            }
         }
     </script>
 </body>
