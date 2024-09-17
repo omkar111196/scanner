@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coupon Verification</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
+   <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f9;
@@ -98,8 +98,9 @@
             const name = document.getElementById("name").value;
             const gender = document.getElementById("gender").value;
             const phone = document.getElementById("phone").value;
+            const date = document.getElementById("date").value;
 
-            if (!name || !gender || !phone) {
+            if (!name || !gender || !phone || !date) {
                 alert("Please fill in all user details");
                 return;
             }
@@ -112,11 +113,12 @@
                     user_details: {
                         name: name,
                         gender: gender,
-                        phone: phone
+                        phone: phone,
+                        date: date
                     }
                 });
                 alert('Coupon successfully verified and used!');
-                document.getElementById("coupon-status").innerHTML = `<p>Coupon has been used successfully.</p>`;
+                document.getElementById("coupon-status").innerHTML = `<p>Coupon ${couponId} has been used successfully.</p>`;
                 document.getElementById("verify-section").style.display = "none";
                 document.getElementById("user-details").style.display = "none";
             } catch (error) {
@@ -154,19 +156,15 @@
         // Check coupon status
         async function checkCouponStatus() {
             try {
-                if (!couponId) {
-                    throw new Error("Coupon ID is missing from the URL.");
-                }
-                
                 const docRef = doc(db, "coupons", couponId);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
                     const coupon = docSnap.data();
                     if (coupon.status === 'used') {
-                        document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
+                        document.getElementById("coupon-status").innerHTML = `<p>This coupon (${couponId}) has already been used.</p>`;
                     } else {
-                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.<br> Coupon ID = ${couponId}<br> Valid upto 30th October 2024</p>`;
+                        document.getElementById("coupon-status").innerHTML = `<p>Coupon (${couponId}) is valid.</p>`;
                         document.getElementById("verify-section").style.display = "block";
                     }
                 } else {
@@ -181,3 +179,4 @@
     </script>
 </body>
 </html>
+
