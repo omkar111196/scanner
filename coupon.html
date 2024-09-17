@@ -4,18 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coupon Verification</title>
-      <style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
             padding: 20px;
         }
-        input, button {
+        h1 {
+            color: #4a90e2;
+            text-align: center;
+        }
+        input, select, button {
             margin: 10px 0;
-            padding: 8px;
+            padding: 12px;
             width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+        button {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #357abd;
         }
         #coupon-status, #verify-section, #user-details {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
             margin: 20px 0;
+        }
+        #coupon-status p, #verify-section h3, #user-details h3 {
+            margin: 0;
+            color: #4a90e2;
         }
     </style>
 </head>
@@ -38,64 +71,19 @@
     <div id="user-details" style="display: none;">
         <h3>Enter User Details</h3>
         <input type="text" id="name" placeholder="Enter your name"><br>
-        <input type="text" id="gender" placeholder="Enter gender"><br>
+        <select id="gender">
+            <option value="" disabled selected>Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="non-binary">Non-Binary</option>
+        </select><br>
         <input type="text" id="phone" placeholder="Enter phone number"><br>
+        <input type="date" id="date" placeholder="Select date"><br>
         <button onclick="submitDetails()">Submit</button>
     </div>
 
-    <!-- Firebase SDKs and Application Logic -->
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmpHCjDRb59vKr5-fpBZfYLEMo4K7E9qk",
-            authDomain: "coupons-26588.firebaseapp.com",
-            projectId: "coupons-26588",
-            storageBucket: "coupons-26588.appspot.com",
-            messagingSenderId: "121426779663",
-            appId: "1:121426779663:web:54af2c99e656db3bd6cd7a",
-            measurementId: "G-DLNN29YBMY"
-        };
-        
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app);
-
-        // Get coupon ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const couponId = "COUPON001";
-
-        // Check coupon status
-        async function checkCouponStatus() {
-            try {
-                const docRef = doc(db, "coupons", couponId);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const coupon = docSnap.data();
-                    if (coupon.status === 'used') {
-                        document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
-                    } else {
-                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.</p>`;
-                        document.getElementById("verify-section").style.display = "block";
-                    }
-                } else {
-                    document.getElementById("coupon-status").innerHTML = `<p>Invalid coupon ID.</p>`;
-                }
-            } catch (error) {
-                document.getElementById("coupon-status").innerHTML = `<p>Error retrieving coupon: ${error.message}</p>`;
-            }
-        }
-
-        checkCouponStatus();
-
-        // Employee verification
+    <script>
+        // Move the verifyEmployee function outside of the script module
         function verifyEmployee() {
             const password = document.getElementById("employee-password").value;
             if (password === 'omkar1234') {
@@ -135,6 +123,57 @@
                 console.error("Error updating coupon: ", error);
             }
         }
+    </script>
+
+    <!-- Firebase SDKs and Application Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmpHCjDRb59vKr5-fpBZfYLEMo4K7E9qk",
+            authDomain: "coupons-26588.firebaseapp.com",
+            projectId: "coupons-26588",
+            storageBucket: "coupons-26588.appspot.com",
+            messagingSenderId: "121426779663",
+            appId: "1:121426779663:web:54af2c99e656db3bd6cd7a",
+            measurementId: "G-DLNN29YBMY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // Get coupon ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const couponId = urlParams.get('id');
+
+        // Check coupon status
+        async function checkCouponStatus() {
+            try {
+                const docRef = doc(db, "coupons", couponId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const coupon = docSnap.data();
+                    if (coupon.status === 'used') {
+                        document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
+                    } else {
+                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.</p>`;
+                        document.getElementById("verify-section").style.display = "block";
+                    }
+                } else {
+                    document.getElementById("coupon-status").innerHTML = `<p>Invalid coupon ID.</p>`;
+                }
+            } catch (error) {
+                document.getElementById("coupon-status").innerHTML = `<p>Error retrieving coupon: ${error.message}</p>`;
+            }
+        }
+
+        checkCouponStatus();
     </script>
 </body>
 </html>
