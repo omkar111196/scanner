@@ -65,7 +65,7 @@
 
         // Get coupon ID from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const couponId = "COUPON001";
+        const couponId = urlParams.get('id');
 
         // Check coupon status
         async function checkCouponStatus() {
