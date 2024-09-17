@@ -14,7 +14,7 @@
             padding: 20px;
         }
         h1 {
-            color: #4a90e2;
+            color: #e94e77;
             text-align: center;
         }
         input, select, button {
@@ -26,18 +26,18 @@
             box-sizing: border-box;
         }
         input:focus, select:focus {
-            border-color: #4a90e2;
+            border-color: #e94e77;
             outline: none;
         }
         button {
-            background-color: #4a90e2;
+            background-color: #e94e77;
             color: #fff;
             border: none;
             cursor: pointer;
             font-weight: bold;
         }
         button:hover {
-            background-color: #357abd;
+            background-color: #d43f5a;
         }
         #coupon-status, #verify-section, #user-details {
             background-color: #fff;
@@ -48,7 +48,7 @@
         }
         #coupon-status p, #verify-section h3, #user-details h3 {
             margin: 0;
-            color: #4a90e2;
+            color: #e94e77;
         }
     </style>
 </head>
@@ -154,6 +154,10 @@
         // Check coupon status
         async function checkCouponStatus() {
             try {
+                if (!couponId) {
+                    throw new Error("Coupon ID is missing from the URL.");
+                }
+                
                 const docRef = doc(db, "coupons", couponId);
                 const docSnap = await getDoc(docRef);
 
@@ -162,7 +166,7 @@
                     if (coupon.status === 'used') {
                         document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
                     } else {
-                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.</p>`;
+                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid. Coupon ID = ${couponId} Valid upto 30th October 2024</p>`;
                         document.getElementById("verify-section").style.display = "block";
                     }
                 } else {
