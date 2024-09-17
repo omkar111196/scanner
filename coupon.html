@@ -14,7 +14,7 @@
             padding: 20px;
         }
         h1 {
-            color: #e94e77;
+            color: #ba0233;
             text-align: center;
         }
         input, select, button {
@@ -26,11 +26,11 @@
             box-sizing: border-box;
         }
         input:focus, select:focus {
-            border-color: #e94e77;
+            border-color: #ba0233;
             outline: none;
         }
         button {
-            background-color: #e94e77;
+            background-color: #ba0233;
             color: #fff;
             border: none;
             cursor: pointer;
@@ -48,7 +48,7 @@
         }
         #coupon-status p, #verify-section h3, #user-details h3 {
             margin: 0;
-            color: #e94e77;
+            color: #ba0233;
         }
     </style>
 </head>
@@ -166,7 +166,7 @@
                     if (coupon.status === 'used') {
                         document.getElementById("coupon-status").innerHTML = `<p>This coupon has already been used.</p>`;
                     } else {
-                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid. Coupon ID = ${couponId} Valid upto 30th October 2024</p>`;
+                        document.getElementById("coupon-status").innerHTML = `<p>Coupon is valid.<br> Coupon ID = ${couponId}<br> Valid upto 30th October 2024</p>`;
                         document.getElementById("verify-section").style.display = "block";
                     }
                 } else {
