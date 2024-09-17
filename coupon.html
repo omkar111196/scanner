@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coupon Verification</title>
+     <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.umd.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.umd.js" defer></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,11 +46,7 @@
     </div>
 
     <!-- Firebase SDKs and Application Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-
+    <script>
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBmpHCjDRb59vKr5-fpBZfYLEMo4K7E9qk",
