@@ -78,7 +78,7 @@
             <option value="non-binary">Non-Binary</option>
         </select><br>
         <input type="text" id="phone" placeholder="Enter phone number"><br>
-        <input type="date" id="date" placeholder="Select date"><br>
+        <input type="date" id="date" placeholder="Select date">Select Date</input><br>
         <button onclick="submitDetails()">Submit</button>
     </div>
 
@@ -164,7 +164,7 @@
                     if (coupon.status === 'used') {
                         document.getElementById("coupon-status").innerHTML = `<p>This coupon (${couponId}) has already been used.</p>`;
                     } else {
-                        document.getElementById("coupon-status").innerHTML = `<p>Coupon (${couponId}) is valid.</p>`;
+                        document.getElementById("coupon-status").innerHTML = `<p>Coupon (${couponId}) is valid. <br> Last date to redeem coupon is 30 October 2024</p>`;
                         document.getElementById("verify-section").style.display = "block";
                     }
                 } else {
